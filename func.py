@@ -1,3 +1,5 @@
+import sys
+
 import spotipy
 import requests
 import json
@@ -97,6 +99,7 @@ def return_attributes(track_, headers):
                 else:
                     time.sleep(5)
                     print("服務器建議等待，但未提供確切的時間。")
+                    sys.exit()
                 continue
 
             _songs_attributes.append(get_song_attributes(song_attributes.text))
