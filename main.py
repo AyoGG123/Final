@@ -31,3 +31,4 @@ my_songs_attributes = []'''
 hit_playlist = get_playlist_tracks_(username=username, playlist_id=SNSD_ALL, spotipy=sp)
 # https://open.spotify.com/playlist/3Me7esQS0xZkSbW0XW7roB?si=50674079dde74588
 hit_songs_attributes = return_attributes(track_=hit_playlist, headers=headers)
+print("end")

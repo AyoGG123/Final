@@ -74,7 +74,7 @@ def get_playlist_tracks_(username, playlist_id, spotipy):
 
         offset += limit
         next = results['next']
-        time.sleep(2)
+        time.sleep(10)
         if next is None:
             break
 
@@ -84,11 +84,25 @@ def get_playlist_tracks_(username, playlist_id, spotipy):
 def return_attributes(track_, headers):
     _songs_attributes = []
     for idx, item in enumerate(track_):
-        track = item['track']
-        song_attributes = requests.get(f"https://api.spotify.com/v1/audio-features/{track['id']}", headers=headers)
-        _songs_attributes.append(get_song_attributes(song_attributes.text))
-        print(f"{idx} {track['artists'][0]['name']} - {track['name']}")
-        print(song_attributes.text)
+        while True:
+            track = item['track']
+            song_attributes = requests.get(f"https://api.spotify.com/v1/audio-features/{track['id']}", headers=headers)
+
+            if song_attributes.status_code == 429:
+                # 如果標頭中包含Retry-After，則獲取其值
+                retry_after = song_attributes.headers.get('Retry-After')
+                if retry_after:
+                    time.sleep(eval(retry_after) + 1)
+                    print(f"服務器建議等待 {retry_after} 秒再試一次。")
+                else:
+                    time.sleep(5)
+                    print("服務器建議等待，但未提供確切的時間。")
+                continue
+
+            _songs_attributes.append(get_song_attributes(song_attributes.text))
+            print(f"{idx} {track['artists'][0]['name']} - {track['name']}")
+            print(song_attributes.text)
+            break
     return _songs_attributes
 
 
