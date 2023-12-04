@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 import os
-import time
-import os
 import json
+import pandas as pd
+import numpy as np
 
 ROOT = os.getcwd()
 
@@ -44,3 +44,45 @@ duration_ms（歌曲持續時間）： 歌曲的持續時間，以毫秒為單�
 time_signature（拍子記號）： 歌曲的拍子記號，通常是4/4。
 其他屬性是一些用於辨識和查詢歌曲的Spotify API特定資訊，如track的ID、URI、分析URL等。
 '''
+
+# 合併所有 JSON 檔的歌曲屬性資料
+all_songs = []
+for data in file_:
+    for item in data:
+        song_info = {
+            'uri': item.get('uri', None),
+            'danceability': item.get('danceability', None),
+            'energy': item.get('energy', None),
+            'valence': item.get('valence', None),
+            'tempo': item.get('tempo', None),
+            # 其他屬性依需求加入
+        }
+        all_songs.append(song_info)
+
+# 建立 DataFrame
+songs_df = pd.DataFrame(all_songs)
+
+# 顯示 DataFrame 的前幾行
+print(songs_df.head())
+
+# 進行一些簡單的分析
+print("\n平均舞曲性 (Danceability):", songs_df['danceability'].mean())
+print("平均能量 (Energy):", songs_df['energy'].mean())
+print("平均情感正向度 (Valence):", songs_df['valence'].mean())
+
+# 顯示某些統計資訊
+print("\n資料描述:")
+print(songs_df.describe())
+
+# 用戶的偏好
+user_preferences = {'danceability': 0.7, 'energy': 0.8}
+
+# 計算歐氏距離
+songs_df['distance'] = np.sqrt((songs_df['danceability'] - user_preferences['danceability']) ** 2 +
+                               (songs_df['energy'] - user_preferences['energy']) ** 2)
+
+# 根據距離排序並選擇最接近的歌曲
+recommended_songs = songs_df.sort_values(by='distance').head(10)[['uri', 'danceability', 'energy']]
+print(recommended_songs)
+
+
