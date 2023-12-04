@@ -10,8 +10,13 @@ client_id_1 = 'd4c6646423e84b129110e8b16665e4b5'
 client_secret_1 = '94353f22852e4474ae2e30348e868469'
 client_id_2 = 'd65c141938284806a236cd911fd2aed0'
 client_secret_2 = '6ab3a371300a48a68f2ff9ee6b770496'
+client_id_3 = 'fb67211eaecf49cf967e7c0bc3aeb76e'
+client_secret_3 = '9425eb8ddc424d0c8064b83d1052d1f2'
 scope = 'user-library-read user-read-private user-read-private user-read-email'
-redirect_uri = 'http://localhost:8888/callback' 
+redirect_uri = 'http://localhost:8888/callback'
+
+client_id = client_id_2
+client_secret = client_secret_2
 '''
 
 chinese_hit_50_id = '0TRuyc7C37J6p2Hg2dFMbW'  # 可用
@@ -40,6 +45,7 @@ sp = get_spotipy()
 
 '''my_playlist = sp.current_user_saved_tracks()
 my_songs_attributes = []'''
+
 for id in top_50:
     playlist = sp.playlist(id)  # 從播放清單詳細信息中獲取播放清單名稱
     playlist_name.append(playlist['name'])
