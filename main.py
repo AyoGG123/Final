@@ -24,8 +24,10 @@ koera_top_50 = '37i9dQZEVXbJZGli0rRP3r'
 taiwan_top_50 = '37i9dQZEVXbMnZEatlMSiu'
 usa_top_50 = '37i9dQZEVXbLRQDuF5jeBp'
 japan_top_50 = '37i9dQZEVXbKXQ4mDTEBXq'
+earth_top_50 = '37i9dQZEVXbMDoHDwVN2tF'
 
-top_50 = [koera_top_50, taiwan_top_50, usa_top_50, japan_top_50]
+top_50 = [koera_top_50, taiwan_top_50, usa_top_50, japan_top_50, earth_top_50]
+
 hit_playlist = []
 hit_songs_attributes = []
 playlist_name = []
