@@ -6,8 +6,10 @@ from func import *
 
 '''
 username = 'chen925069'
-client_id = 'd4c6646423e84b129110e8b16665e4b5'
-client_secret = '94353f22852e4474ae2e30348e868469'
+client_id_1 = 'd4c6646423e84b129110e8b16665e4b5'
+client_secret_1 = '94353f22852e4474ae2e30348e868469'
+client_id_2 = 'd65c141938284806a236cd911fd2aed0'
+client_secret_2 = '6ab3a371300a48a68f2ff9ee6b770496'
 scope = 'user-library-read user-read-private user-read-private user-read-email'
 redirect_uri = 'http://localhost:8888/callback' 
 '''
