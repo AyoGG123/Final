@@ -23,12 +23,17 @@ client_id_1 = 'd4c6646423e84b129110e8b16665e4b5'
 client_secret_1 = '94353f22852e4474ae2e30348e868469'
 client_id_2 = 'd65c141938284806a236cd911fd2aed0'
 client_secret_2 = '6ab3a371300a48a68f2ff9ee6b770496'
+client_id_3 = 'fb67211eaecf49cf967e7c0bc3aeb76e'
+client_secret_3 = '9425eb8ddc424d0c8064b83d1052d1f2'
 scope = 'user-library-read user-read-private user-read-private user-read-email'
 redirect_uri = 'http://localhost:8888/callback'
 
+client_id = client_id_2
+client_secret = client_secret_2
+
 
 def get_spotipy():
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id_2, client_secret=client_secret_2,
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id, client_secret=client_secret,
                                                    redirect_uri=redirect_uri,
                                                    scope=scope))
     return sp
@@ -40,8 +45,8 @@ def get_token():
 
     data = {
         'grant_type': 'client_credentials',
-        'client_id': client_id_2,
-        'client_secret': client_secret_2,
+        'client_id': client_id,
+        'client_secret': client_secret,
     }
     auth_response = requests.post(auth_url, data=data)
     access_token = auth_response.json().get('access_token')
