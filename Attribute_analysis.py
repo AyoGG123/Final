@@ -6,25 +6,58 @@ import numpy as np
 
 ROOT = os.getcwd()
 
+
+def get_file(dirs):
+    test_files = []
+    file_ = []
+    for root, dirs, files in dirs:
+        for file in files:
+            test_files.append(os.path.join(ROOT, root, file))
+            '''print(f"test_files:{os.path.join(ROOT, root, file)}")
+            print(f"file_names:{file}")
+            print()'''
+
+    for file in test_files:
+        with open(file, 'r') as json_file:  # 从 JSON 文件中读取数据
+            file_.append(json.load(json_file))
+            # data = json.loads(json.dumps(data, indent=4, sort_keys=True))
+            # data = json.loads(json.dumps(data))
+    return file_
+
+
 path = 'Attribute'
 
 file_dirs = os.walk(path)
+my_playlist_file_dirs = os.walk('myplaylist')
 
-test_files = []
-file_ = []
+file_ = get_file(file_dirs)
+my_playlist_file_ = get_file(my_playlist_file_dirs)
 
-for root, dirs, files in file_dirs:
-    for file in files:
-        test_files.append(os.path.join(ROOT, root, file))
-        '''print(f"test_files:{os.path.join(ROOT, root, file)}")
-        print(f"file_names:{file}")
-        print()'''
 
-for file in test_files:
-    with open(file, 'r') as json_file:  # 从 JSON 文件中读取数据
-        file_.append(json.load(json_file))
-        # data = json.loads(json.dumps(data, indent=4, sort_keys=True))
-        # data = json.loads(json.dumps(data))
+def get_songs_df(file):
+    # 合併所有 JSON 檔的歌曲屬性資料
+    all_songs = []
+    for data in file:
+        for item in data:
+            song_info = {
+                'uri': item.get('uri', None),
+                'danceability': item.get('danceability', None),
+                'energy': item.get('energy', None),
+                'valence': item.get('valence', None),
+                'tempo': item.get('tempo', None),
+                # 其他屬性依需求加入
+            }
+            all_songs.append(song_info)
+
+    # 建立 DataFrame
+    return pd.DataFrame(all_songs)
+
+
+def playlist_average_preferences(songs_df):
+    return {'danceability': songs_df['danceability'].mean(),
+            'energy': songs_df['energy'].mean(),
+            'valence': songs_df['valence'].mean()}
+
 
 '''
 這些是從Spotify API中取得的歌曲屬性（Audio Features）的資訊，這些屬性描述了特定歌曲的音樂特徵。以下是這些屬性的解釋：
@@ -45,44 +78,30 @@ time_signature（拍子記號）： 歌曲的拍子記號，通常是4/4。
 其他屬性是一些用於辨識和查詢歌曲的Spotify API特定資訊，如track的ID、URI、分析URL等。
 '''
 
-# 合併所有 JSON 檔的歌曲屬性資料
-all_songs = []
-for data in file_:
-    for item in data:
-        song_info = {
-            'uri': item.get('uri', None),
-            'danceability': item.get('danceability', None),
-            'energy': item.get('energy', None),
-            'valence': item.get('valence', None),
-            'tempo': item.get('tempo', None),
-            # 其他屬性依需求加入
-        }
-        all_songs.append(song_info)
+if __name__ == "__main__":
+    # 建立 DataFrame
+    db_df = get_songs_df(file_)
+    my_df = get_songs_df(my_playlist_file_)
+    # 顯示 DataFrame 的前幾行
+    print(db_df.head())
 
-# 建立 DataFrame
-songs_df = pd.DataFrame(all_songs)
+    # 進行一些簡單的分析
+    print("\n平均舞曲性 (Danceability):", db_df['danceability'].mean())
+    print("平均能量 (Energy):", db_df['energy'].mean())
+    print("平均情感正向度 (Valence):", db_df['valence'].mean())
 
-# 顯示 DataFrame 的前幾行
-print(songs_df.head())
+    # 顯示某些統計資訊
+    print("\n資料描述:")
+    print(db_df.describe())
 
-# 進行一些簡單的分析
-print("\n平均舞曲性 (Danceability):", songs_df['danceability'].mean())
-print("平均能量 (Energy):", songs_df['energy'].mean())
-print("平均情感正向度 (Valence):", songs_df['valence'].mean())
+    # 用戶的偏好
+    user_preferences = playlist_average_preferences(my_df)
+    print(user_preferences)
 
-# 顯示某些統計資訊
-print("\n資料描述:")
-print(songs_df.describe())
+    # 計算歐氏距離
+    db_df['distance'] = np.sqrt((db_df['danceability'] - user_preferences['danceability']) ** 2 +
+                                (db_df['energy'] - user_preferences['energy']) ** 2)
 
-# 用戶的偏好
-user_preferences = {'danceability': 0.7, 'energy': 0.8}
-
-# 計算歐氏距離
-songs_df['distance'] = np.sqrt((songs_df['danceability'] - user_preferences['danceability']) ** 2 +
-                               (songs_df['energy'] - user_preferences['energy']) ** 2)
-
-# 根據距離排序並選擇最接近的歌曲
-recommended_songs = songs_df.sort_values(by='distance').head(10)[['uri', 'danceability', 'energy']]
-print(recommended_songs)
-
-
+    # 根據距離排序並選擇最接近的歌曲
+    recommended_songs = db_df.sort_values(by='distance').head(10)[['uri', 'danceability', 'energy']]
+    print(recommended_songs)

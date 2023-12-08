@@ -1,5 +1,4 @@
 import sys
-
 import spotipy
 import requests
 import json
@@ -28,8 +27,8 @@ client_secret_3 = '9425eb8ddc424d0c8064b83d1052d1f2'
 scope = 'user-library-read user-read-private user-read-private user-read-email'
 redirect_uri = 'http://localhost:8888/callback'
 
-client_id = client_id_2
-client_secret = client_secret_2
+client_id = client_id_3
+client_secret = client_secret_3
 
 
 def get_spotipy():
@@ -114,6 +113,23 @@ def return_attributes(track_, headers):
             print(song_attributes.text)
             break
     return _songs_attributes
+
+
+def list_to_attributes(sp, headers, list):
+    hit_playlist = []
+    hit_songs_attributes = []
+    playlist_name = []
+
+    for id in list:
+        playlist = sp.playlist(id)  # 從播放清單詳細信息中獲取播放清單名稱
+        playlist_name.append(playlist['name'])
+
+        a = get_playlist_tracks_(username=username, playlist_id=id, spotipy=sp)
+        hit_playlist.append(a)
+        # https://open.spotify.com/playlist/3Me7esQS0xZkSbW0XW7roB?si=50674079dde74588
+        a = return_attributes(track_=a, headers=headers)
+        hit_songs_attributes.append(a)
+    return playlist_name, hit_playlist, hit_songs_attributes
 
 
 if __name__ == "__main__":

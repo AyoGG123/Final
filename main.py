@@ -18,10 +18,15 @@ redirect_uri = 'http://localhost:8888/callback'
 client_id = client_id_2
 client_secret = client_secret_2
 '''
+headers = get_token()
+
+# auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+
+sp = get_spotipy()
 
 chinese_hit_50_id = '0TRuyc7C37J6p2Hg2dFMbW'  # 可用
 my_playlist_id_1 = '2y05SOLfbRkjgCo3NxrTK0'  # 魔幻力量
-my_playlist_id_2 = '4NGz298oXN9FqxRGhJRHmG'  # PS4
+my_playlist_id_2 = '4NGz298oXN9FqxRGhJRHmG'  # PS4歌單
 hit_playlist_id = '3Me7esQS0xZkSbW0XW7roB'
 SNSD_HIT_ID = '2XHQMUrtqerDns7rvl7J25'
 SNSD_ALL = '5YEU5bf6TGZ53YMkBSN8RI'
@@ -30,23 +35,18 @@ taiwan_top_50 = '37i9dQZEVXbMnZEatlMSiu'
 usa_top_50 = '37i9dQZEVXbLRQDuF5jeBp'
 japan_top_50 = '37i9dQZEVXbKXQ4mDTEBXq'
 earth_top_50 = '37i9dQZEVXbMDoHDwVN2tF'
+best_of_hit_chinese = '37i9dQZF1DX5KtaZhtKgCY'
+best_of_hit_western = '37i9dQZF1DX3K6w77QPdGB'
+best_of_hit_korean = '37i9dQZF1DWXGe6Yz1Nf9K'
 
 top_50 = [koera_top_50, taiwan_top_50, usa_top_50, japan_top_50, earth_top_50]
-
-hit_playlist = []
-hit_songs_attributes = []
-playlist_name = []
-
-headers = get_token()
-
-# auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-
-sp = get_spotipy()
+best_of_hit = [best_of_hit_chinese, best_of_hit_western, best_of_hit_korean]
+my_playlist_list = [my_playlist_id_2]
 
 '''my_playlist = sp.current_user_saved_tracks()
 my_songs_attributes = []'''
 
-for id in top_50:
+'''for id in top_50:
     playlist = sp.playlist(id)  # 從播放清單詳細信息中獲取播放清單名稱
     playlist_name.append(playlist['name'])
 
@@ -54,8 +54,10 @@ for id in top_50:
     hit_playlist.append(a)
     # https://open.spotify.com/playlist/3Me7esQS0xZkSbW0XW7roB?si=50674079dde74588
     a = return_attributes(track_=a, headers=headers)
-    hit_songs_attributes.append(a)
+    hit_songs_attributes.append(a)'''
 
+playlist_name, hit_playlist, hit_songs_attributes = list_to_attributes(sp=sp, headers=headers,
+                                                                       list=best_of_hit)
 print("end")
 
 for playlist, songs_attributes, name in zip(hit_playlist, hit_songs_attributes, playlist_name):
