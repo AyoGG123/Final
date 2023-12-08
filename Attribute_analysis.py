@@ -5,6 +5,13 @@ import pandas as pd
 import numpy as np
 
 ROOT = os.getcwd()
+attribute_path = 'Attribute'
+my_playlist_file_path = 'myplaylist'
+all_path = 'all_in_one'
+
+file_dirs = os.walk(attribute_path)
+my_playlist_file_dirs = os.walk(my_playlist_file_path)
+all_dirs = os.walk(all_path)
 
 
 def get_file(dirs):
@@ -25,19 +32,10 @@ def get_file(dirs):
     return file_
 
 
-path = 'Attribute'
-
-file_dirs = os.walk(path)
-my_playlist_file_dirs = os.walk('myplaylist')
-
-file_ = get_file(file_dirs)
-my_playlist_file_ = get_file(my_playlist_file_dirs)
-
-
-def get_songs_df(file):
+def get_songs_df(file_):
     # 合併所有 JSON 檔的歌曲屬性資料
     all_songs = []
-    for data in file:
+    for data in file_:
         for item in data:
             song_info = {
                 'uri': item.get('uri', None),
@@ -57,6 +55,24 @@ def playlist_average_preferences(songs_df):
     return {'danceability': songs_df['danceability'].mean(),
             'energy': songs_df['energy'].mean(),
             'valence': songs_df['valence'].mean()}
+
+
+def merge_attribute(attribute_path):
+    file_ = get_file(file_dirs)
+    all_songs = []
+
+    for data in file_:
+        for item in data:
+            all_songs.append(item)
+
+    print(f"all_songs：{len(all_songs)}")
+    unique_data = list({item['id']: item for item in all_songs}.values())
+    print(f"unique_data：{len(unique_data)}")
+    json_data = json.dumps(unique_data, indent=4)  # indent=4 是為了美觀的格式化
+
+    # 將 JSON 資料寫入新的檔案
+    with open('all_in_one/all.json', 'w') as file:
+        file.write(json_data)
 
 
 '''
@@ -79,29 +95,37 @@ time_signature（拍子記號）： 歌曲的拍子記號，通常是4/4。
 '''
 
 if __name__ == "__main__":
+    # merge_attribute(attribute_path=attribute_path)
+
+    file_ = get_file(file_dirs)
+    my_playlist_file_ = get_file(my_playlist_file_dirs)
+    all_ = get_file(all_dirs)  # 不重複的
+
     # 建立 DataFrame
     db_df = get_songs_df(file_)
     my_df = get_songs_df(my_playlist_file_)
+    all_df = get_songs_df(all_)  # 不重複的
+
     # 顯示 DataFrame 的前幾行
-    print(db_df.head())
+    print(all_df.head())
 
     # 進行一些簡單的分析
-    print("\n平均舞曲性 (Danceability):", db_df['danceability'].mean())
-    print("平均能量 (Energy):", db_df['energy'].mean())
-    print("平均情感正向度 (Valence):", db_df['valence'].mean())
+    print("\n平均舞曲性 (Danceability):", all_df['danceability'].mean())
+    print("平均能量 (Energy):", all_df['energy'].mean())
+    print("平均情感正向度 (Valence):", all_df['valence'].mean())
 
     # 顯示某些統計資訊
     print("\n資料描述:")
-    print(db_df.describe())
+    print(all_df.describe())
 
     # 用戶的偏好
     user_preferences = playlist_average_preferences(my_df)
     print(user_preferences)
 
     # 計算歐氏距離
-    db_df['distance'] = np.sqrt((db_df['danceability'] - user_preferences['danceability']) ** 2 +
-                                (db_df['energy'] - user_preferences['energy']) ** 2)
+    all_df['distance'] = np.sqrt((all_df['danceability'] - user_preferences['danceability']) ** 2 +
+                                 (all_df['energy'] - user_preferences['energy']) ** 2)
 
     # 根據距離排序並選擇最接近的歌曲
-    recommended_songs = db_df.sort_values(by='distance').head(10)[['uri', 'danceability', 'energy']]
+    recommended_songs = all_df.sort_values(by='distance').head(10)[['uri', 'danceability', 'energy']]
     print(recommended_songs)
