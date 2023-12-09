@@ -39,9 +39,12 @@ best_of_hit_chinese = '37i9dQZF1DX5KtaZhtKgCY'
 best_of_hit_western = '37i9dQZF1DX3K6w77QPdGB'
 best_of_hit_korean = '37i9dQZF1DWXGe6Yz1Nf9K'
 
+hit_chinese = '3yWcDX7d2jGkdf0kDM8fUT'  # 熱門華語 2350首
+
 top_50 = [koera_top_50, taiwan_top_50, usa_top_50, japan_top_50, earth_top_50]
 best_of_hit = [best_of_hit_chinese, best_of_hit_western, best_of_hit_korean]
 my_playlist_list = [my_playlist_id_2]
+hit_chinese_ = [hit_chinese]
 
 '''my_playlist = sp.current_user_saved_tracks()
 my_songs_attributes = []'''
@@ -57,7 +60,7 @@ my_songs_attributes = []'''
     hit_songs_attributes.append(a)'''
 
 playlist_name, hit_playlist, hit_songs_attributes = list_to_attributes(sp=sp, headers=headers,
-                                                                       list=best_of_hit)
+                                                                       list=hit_chinese_)
 print("end")
 
 for playlist, songs_attributes, name in zip(hit_playlist, hit_songs_attributes, playlist_name):
