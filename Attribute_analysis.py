@@ -57,7 +57,7 @@ def playlist_average_preferences(songs_df):
             'valence': songs_df['valence'].mean()}
 
 
-def merge_attribute(attribute_path):
+def merge_attribute(source_path, target_path):
     file_ = get_file(file_dirs)
     all_songs = []
 
@@ -71,7 +71,7 @@ def merge_attribute(attribute_path):
     json_data = json.dumps(unique_data, indent=4)  # indent=4 是為了美觀的格式化
 
     # 將 JSON 資料寫入新的檔案
-    with open('all_in_one/all.json', 'w') as file:
+    with open(f'{target_path}/all.json', 'w') as file:
         file.write(json_data)
 
 
@@ -95,7 +95,7 @@ time_signature（拍子記號）： 歌曲的拍子記號，通常是4/4。
 '''
 
 if __name__ == "__main__":
-    # merge_attribute(attribute_path=attribute_path)
+    # merge_attribute(source_path=attribute_path, target_path=all_path)
 
     file_ = get_file(file_dirs)
     my_playlist_file_ = get_file(my_playlist_file_dirs)
@@ -114,9 +114,9 @@ if __name__ == "__main__":
     print("平均能量 (Energy):", all_df['energy'].mean())
     print("平均情感正向度 (Valence):", all_df['valence'].mean())
 
-    # 顯示某些統計資訊
+    '''# 顯示某些統計資訊
     print("\n資料描述:")
-    print(all_df.describe())
+    print(all_df.describe())'''
 
     # 用戶的偏好
     user_preferences = playlist_average_preferences(my_df)
