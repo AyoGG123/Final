@@ -12,12 +12,14 @@ client_id_2 = 'd65c141938284806a236cd911fd2aed0'
 client_secret_2 = '6ab3a371300a48a68f2ff9ee6b770496'
 client_id_3 = 'fb67211eaecf49cf967e7c0bc3aeb76e'
 client_secret_3 = '9425eb8ddc424d0c8064b83d1052d1f2'
+client_id_4 = '8110311acd80468ea8d61c63c1c2276f'
+client_secret_4 = '1d1ef322d10f403fadb49cced40adbc3'
+client_id_5 = '0981062b21bf468ab1a4f4e18d32cf42'
+client_secret_5 = '0010daacb89046459bdd699809322611'
 scope = 'user-library-read user-read-private user-read-private user-read-email'
 redirect_uri = 'http://localhost:8888/callback'
-
-client_id = client_id_2
-client_secret = client_secret_2
 '''
+
 # headers = get_token()
 
 # auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
