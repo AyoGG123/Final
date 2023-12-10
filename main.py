@@ -18,11 +18,11 @@ redirect_uri = 'http://localhost:8888/callback'
 client_id = client_id_2
 client_secret = client_secret_2
 '''
-headers = get_token()
+# headers = get_token()
 
 # auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 
-sp = get_spotipy()
+# sp = get_spotipy()
 
 chinese_hit_50_id = '0TRuyc7C37J6p2Hg2dFMbW'  # 可用
 my_playlist_id_1 = '2y05SOLfbRkjgCo3NxrTK0'  # 魔幻力量
@@ -49,18 +49,7 @@ hit_chinese_ = [hit_chinese]
 '''my_playlist = sp.current_user_saved_tracks()
 my_songs_attributes = []'''
 
-'''for id in top_50:
-    playlist = sp.playlist(id)  # 從播放清單詳細信息中獲取播放清單名稱
-    playlist_name.append(playlist['name'])
-
-    a = get_playlist_tracks_(username=username, playlist_id=id, spotipy=sp)
-    hit_playlist.append(a)
-    # https://open.spotify.com/playlist/3Me7esQS0xZkSbW0XW7roB?si=50674079dde74588
-    a = return_attributes(track_=a, headers=headers)
-    hit_songs_attributes.append(a)'''
-
-playlist_name, hit_playlist, hit_songs_attributes = list_to_attributes(sp=sp, headers=headers,
-                                                                       list=hit_chinese_)
+playlist_name, hit_playlist, hit_songs_attributes = list_to_attributes(list=hit_chinese_)
 print("end")
 
 for playlist, songs_attributes, name in zip(hit_playlist, hit_songs_attributes, playlist_name):

@@ -27,8 +27,11 @@ client_secret_3 = '9425eb8ddc424d0c8064b83d1052d1f2'
 scope = 'user-library-read user-read-private user-read-private user-read-email'
 redirect_uri = 'http://localhost:8888/callback'
 
-client_id = client_id_3
-client_secret = client_secret_3
+client_id_list = [client_id_1, client_id_2, client_id_3]
+client_secret_list = [client_secret_1, client_secret_2, client_secret_3]
+
+client_id = client_id_1
+client_secret = client_secret_1
 
 
 def get_spotipy():
@@ -89,9 +92,10 @@ def get_playlist_tracks_(username, playlist_id, spotipy):
     return tracks
 
 
-def return_attributes(track_, headers):
-    _songs_attributes = []
-    for idx, item in enumerate(track_):
+def return_attributes(track_, headers, _songs_attributes, idx_index=0):
+    # _songs_attributes = []
+
+    for idx, item in enumerate(track_[idx_index:]):
         while True:
             track = item['track']
             song_attributes = requests.get(f"https://api.spotify.com/v1/audio-features/{track['id']}", headers=headers)
@@ -103,32 +107,54 @@ def return_attributes(track_, headers):
                     time.sleep(eval(retry_after) + 1)
                     print(f"服務器建議等待 {retry_after} 秒再試一次。")
                 else:
-                    time.sleep(5)
                     print("服務器建議等待，但未提供確切的時間。")
-                    sys.exit()
+                    print(f"已return 在idx={idx + idx_index}失敗 更換token")
+                    return _songs_attributes, True, idx + idx_index
                 continue
 
             _songs_attributes.append(get_song_attributes(song_attributes.text))
-            print(f"{idx} {track['artists'][0]['name']} - {track['name']}")
+            print(f"{idx + idx_index} {track['artists'][0]['name']} - {track['name']}")
             print(song_attributes.text)
             break
-    return _songs_attributes
+
+    return _songs_attributes, False, len(track_)
 
 
-def list_to_attributes(sp, headers, list):
+def list_to_attributes(list):
+    headers = get_token()
+    sp = get_spotipy()
+
     hit_playlist = []
     hit_songs_attributes = []
     playlist_name = []
+    i = 1
 
     for id in list:
         playlist = sp.playlist(id)  # 從播放清單詳細信息中獲取播放清單名稱
         playlist_name.append(playlist['name'])
 
-        a = get_playlist_tracks_(username=username, playlist_id=id, spotipy=sp)
-        hit_playlist.append(a)
-        # https://open.spotify.com/playlist/3Me7esQS0xZkSbW0XW7roB?si=50674079dde74588
-        a = return_attributes(track_=a, headers=headers)
-        hit_songs_attributes.append(a)
+        tracks = get_playlist_tracks_(username=username, playlist_id=id, spotipy=sp)
+        hit_playlist.append(tracks)
+
+        a, flag, idx_index = return_attributes(track_=tracks, headers=headers, _songs_attributes=[], idx_index=0)
+
+        while flag:
+            if i == len(client_id_list):
+                print(f"在{playlist_name[len(playlist_name) - 1]} idx_index={idx_index} 遇到異常")
+                break
+
+            client_id = client_id_list[i]
+            client_secret = client_secret_list[i]
+            i += 1
+
+            headers = get_token()
+            sp = get_spotipy()
+
+            a, flag, idx_index = return_attributes(track_=tracks, headers=headers, _songs_attributes=a,
+                                                   idx_index=idx_index)
+
+    hit_songs_attributes.append(a)
+
     return playlist_name, hit_playlist, hit_songs_attributes
 
 
